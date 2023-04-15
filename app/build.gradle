@@ -1,0 +1,53 @@
+plugins {
+    id 'java-library'
+    id 'war'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    api 'org.jboss.resteasy:resteasy-core:6.2.2.Final'
+    api 'org.jboss.resteasy:resteasy-jackson2-provider:6.2.2.Final'
+    api 'org.jboss.resteasy:resteasy-servlet-initializer:6.2.2.Final'
+    api 'org.slf4j:slf4j-api:2.0.6'
+    api 'ch.qos.logback:logback-classic:1.4.5'
+}
+
+group = 'RESTEasy.sample'
+version = '1.0.0'
+description = 'RESTEasy JAX-RS Sample'
+
+java {
+    sourceCompatibility = "17"
+    targetCompatibility = "17"
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+war {
+    archiveFileName.set 'ROOT.war'
+}
+
+tasks.register('webapp') {
+    dependsOn 'build'
+    doLast {
+        copy {
+            from zipTree("build/libs/ROOT.war")
+            into 'build/webapp'
+        }
+    }
+}
+
+tasks.register('deploy') {
+    dependsOn 'build'
+    doLast {
+        copy {
+            from 'build/libs/ROOT.war'
+            into '../deploy'
+        }
+    }
+}
